@@ -1,85 +1,109 @@
+
+
 #include <iostream>
 #include <string>
 #include <vector>
 
 using namespace std;
 
-class DiaryEntry {
+class DiaryEntry
+{
 private:
     string date;
     string content;
 
 public:
-    void setAll(const string& entryDate, const string& entryContent) {
-        date = entryDate;
-        content = entryContent;
+    void setAll(const string &date, const string &content)
+    {
+        this->date = date;
+        this->content = content;
     }
 
-    string getDate() const {
-        return date;
+    string getDate() const
+    {
+        return this->date;
     }
 
-    string getContent() const {
-        return content;
+    string getContent() const
+    {
+        return this->content;
     }
 
-    void displayEntry() const {
-        cout << "Date: " << date << "\nContent: " << content << "\n";
+    void displayEntry() const
+    {
+        cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
     }
 };
 
-class DiaryManager {
+class DiaryManager
+{
 private:
     vector<DiaryEntry> entries;
 
 public:
-    void addEntry(const DiaryEntry& entry) {
-        entries.push_back(entry);
+    void addEntry(const DiaryEntry &entry)
+    {
+        this->entries.push_back(entry);
     }
 
-    void viewEntries() const {
-        if (entries.empty()) {
+    void viewEntries() const
+    {
+        if (this->entries.empty())
+        {
             cout << "No entries to display.\n";
             return;
         }
 
-        for (const auto& entry : entries) {
+        for (const auto &entry : this->entries)
+        {
             entry.displayEntry();
             cout << "----------------------\n";
         }
     }
 
-    void deleteEntry(const string& date) {
-        for (auto it = entries.begin(); it != entries.end(); ) {
-            if (it->getDate() == date) {
-                it = entries.erase(it);
-            } else {
+    void deleteEntry(const string &date)
+    {
+        for (auto it = this->entries.begin();
+             it != this->entries.end();)
+        {
+            if (it->getDate() == date)
+            {
+                it = this->entries.erase(it);
+            }
+            else
+            {
                 ++it;
             }
         }
     }
 
-    void findEntry(const string& date) const {
+    void findEntry(const string &date) const
+    {
         bool found = false;
-        for (const auto& entry : entries) {
-            if (entry.getDate() == date) {
+        for (const auto &entry : this->entries)
+        {
+            if (entry.getDate() == date)
+            {
                 entry.displayEntry();
                 found = true;
                 break;
             }
         }
-        if (!found) {
+        if (!found)
+        {
             cout << "Entry not found for date: " << date << "\n";
         }
     }
 };
 
-int main() {
+int main()
+{
     DiaryManager diaryManager;
     int choice;
     string date, content;
 
-    while (true) {
+    while (true)
+    {
         cout << "\nDiary Manager\n";
         cout << "1. Add Entry\n";
         cout << "2. View Entries\n";
@@ -90,45 +114,45 @@ int main() {
         cin >> choice;
         cin.ignore(); // To ignore the leftover newline character
 
-        switch (choice) {
-            case 1:
-                cout << "Enter date (YYYY-MM-DD): ";
-                getline(cin, date);
-                cout << "Enter content: ";
-                getline(cin, content);
-                {
-                    DiaryEntry entry;
-                    entry.setAll(date, content);
-                    diaryManager.addEntry(entry);
-                }
-                break;
+        switch (choice)
+        {
+        case 1:
+            cout << "Enter date (YYYY-MM-DD): ";
+            getline(cin, date);
+            cout << "Enter content: ";
+            getline(cin, content);
+            {
+                DiaryEntry entry;
+                entry.setAll(date, content);
+                diaryManager.addEntry(entry);
+            }
+            break;
 
-            case 2:
-                cout << "Diary Entries:\n";
-                diaryManager.viewEntries();
-                break;
+        case 2:
+            cout << "Diary Entries:\n";
+            diaryManager.viewEntries();
+            break;
 
-            case 3:
-                cout << "Enter date of entry to delete (YYYY-MM-DD): ";
-                getline(cin, date);
-                diaryManager.deleteEntry(date);
-                break;
+        case 3:
+            cout << "Enter date of entry to delete (YYYY-MM-DD): ";
+            getline(cin, date);
+            diaryManager.deleteEntry(date);
+            break;
 
-            case 4:
-                cout << "Enter date to find entry (YYYY-MM-DD): ";
-                getline(cin, date);
-                diaryManager.findEntry(date);
-                break;
+        case 4:
+            cout << "Enter date to find entry (YYYY-MM-DD): ";
+            getline(cin, date);
+            diaryManager.findEntry(date);
+            break;
 
-            case 5:
-                return 0;
+        case 5:
+            return 0;
 
-            default:
-                cout << "Invalid choice. Please try again.\n";
-                break;
+        default:
+            cout << "Invalid choice. Please try again.\n";
+            break;
         }
     }
 
     return 0;
 }
-
