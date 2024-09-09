@@ -36,6 +36,8 @@ class DiaryManager
 {
 private:
     vector<DiaryEntry*> entries;
+    static int totalEntries;
+    static int totalDeleted;
 
 public:
     ~DiaryManager() // Destructor to free memory
@@ -49,6 +51,7 @@ public:
     void addEntry(DiaryEntry* entry)
     {
         this->entries.push_back(entry);
+        totalEntries++;  // Increment total entries
     }
 
     void viewEntries() const
@@ -74,6 +77,7 @@ public:
             {
                 delete *it; // Free memory
                 it = this->entries.erase(it);
+                totalDeleted++;  // Increment total deleted
             }
             else
             {
@@ -99,7 +103,17 @@ public:
             cout << "Entry not found for date: " << date << "\n";
         }
     }
+
+    static void displayStats()
+    {
+        cout << "Total Entries Created: " << totalEntries << "\n";
+        cout << "Total Entries Deleted: " << totalDeleted << "\n";
+    }
 };
+
+// Initialize static variables
+int DiaryManager::totalEntries = 0;
+int DiaryManager::totalDeleted = 0;
 
 int main()
 {
@@ -139,7 +153,8 @@ int main()
         cout << "2. View Entries\n";
         cout << "3. Delete Entry\n";
         cout << "4. Find Entry\n";
-        cout << "5. Exit\n";
+        cout << "5. Display Stats\n";
+        cout << "6. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
         cin.ignore();
@@ -176,6 +191,10 @@ int main()
             break;
 
         case 5:
+            DiaryManager::displayStats();
+            break;
+
+        case 6:
             return 0;
 
         default:
