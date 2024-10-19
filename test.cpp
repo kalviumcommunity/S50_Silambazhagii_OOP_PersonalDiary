@@ -11,6 +11,28 @@ private:
     string content;  // Hiding implementation details from the user
 
 public:
+    // Default constructor
+    DiaryEntry()
+    {
+        date = "N/A";
+        content = "Empty";
+        cout << "Default constructor called for DiaryEntry.\n";
+    }
+
+    // Parameterized constructor
+    DiaryEntry(const string &date, const string &content)
+    {
+        this->date = date;
+        this->content = content;
+        cout << "Parameterized constructor called for DiaryEntry with date: " << date << "\n";
+    }
+
+    // Destructor
+    ~DiaryEntry()
+    {
+        cout << "Destructor called for DiaryEntry with date: " << date << "\n";
+    }
+
     // Public Mutator (setter) for the date - Abstraction of internal data handling
     void setDate(const string &date)
     {
@@ -51,6 +73,12 @@ private:
     static int totalDeleted;      // Static member to keep track of total deleted entries
 
 public:
+    // Constructor
+    DiaryManager()
+    {
+        cout << "DiaryManager created.\n";
+    }
+
     // Destructor to clean up dynamically allocated memory
     ~DiaryManager() 
     {
@@ -58,6 +86,7 @@ public:
         {
             delete entry;
         }
+        cout << "DiaryManager destroyed, memory cleaned.\n";
     }
 
     // Function to add a new diary entry
@@ -138,29 +167,16 @@ int main()
     int choice;
     string date, content;
 
+    // Array to hold initial diary entries
     const int SIZE = 5;
-    DiaryEntry* initialEntries[SIZE];  // Array to hold initial diary entries
+    DiaryEntry* initialEntries[SIZE]; 
 
-    // Initialize some sample diary entries
-    initialEntries[0] = new DiaryEntry();
-    initialEntries[0]->setDate("2024-01-01");
-    initialEntries[0]->setContent("New Year's Day");
-
-    initialEntries[1] = new DiaryEntry();
-    initialEntries[1]->setDate("2024-02-14");
-    initialEntries[1]->setContent("Valentine's Day");
-
-    initialEntries[2] = new DiaryEntry();
-    initialEntries[2]->setDate("2024-03-17");
-    initialEntries[2]->setContent("St. Patrick's Day");
-
-    initialEntries[3] = new DiaryEntry();
-    initialEntries[3]->setDate("2024-07-04");
-    initialEntries[3]->setContent("Independence Day");
-
-    initialEntries[4] = new DiaryEntry();
-    initialEntries[4]->setDate("2024-12-25");
-    initialEntries[4]->setContent("Christmas Day");
+    // Initialize some sample diary entries using parameterized constructors
+    initialEntries[0] = new DiaryEntry("2024-01-01", "New Year's Day");
+    initialEntries[1] = new DiaryEntry("2024-02-14", "Valentine's Day");
+    initialEntries[2] = new DiaryEntry("2024-03-17", "St. Patrick's Day");
+    initialEntries[3] = new DiaryEntry("2024-07-04", "Independence Day");
+    initialEntries[4] = new DiaryEntry("2024-12-25", "Christmas Day");
 
     // Add the initial entries to the diary
     cout << "Adding initial entries...\n";
@@ -193,9 +209,7 @@ int main()
             cout << "Enter content: ";
             getline(cin, content);
             {
-                DiaryEntry* entry = new DiaryEntry();
-                entry->setDate(date);
-                entry->setContent(content);
+                DiaryEntry* entry = new DiaryEntry(date, content);  // Use parameterized constructor
                 diaryManager.addEntry(entry);
             }
             break;
