@@ -6,26 +6,35 @@ using namespace std;
 class DiaryEntry
 {
 private:
-    string date;
-    string content;
+    string date;     // Private members for encapsulation
+    string content;  // Data hiding is applied here
 
 public:
-    void setAll(const string &date, const string &content)
+    // Mutator (setter) for date
+    void setDate(const string &date)
     {
         this->date = date;
-        this->content = content;
     }
 
+    // Accessor (getter) for date
     string getDate() const
     {
         return this->date;
     }
 
+    // Mutator (setter) for content
+    void setContent(const string &content)
+    {
+        this->content = content;
+    }
+
+    // Accessor (getter) for content
     string getContent() const
     {
         return this->content;
     }
 
+    // Display function to show the entry's details
     void displayEntry() const
     {
         cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
@@ -35,12 +44,13 @@ public:
 class DiaryManager
 {
 private:
-    vector<DiaryEntry*> entries;
-    static int totalEntries;
-    static int totalDeleted;
+    vector<DiaryEntry*> entries;  // Private vector to store diary entries
+    static int totalEntries;      // Static variable to count total entries
+    static int totalDeleted;      // Static variable to count deleted entries
 
 public:
-    ~DiaryManager() // Destructor to free memory
+    // Destructor to free up dynamically allocated memory
+    ~DiaryManager() 
     {
         for (auto entry : entries)
         {
@@ -48,12 +58,14 @@ public:
         }
     }
 
+    // Add a new diary entry
     void addEntry(DiaryEntry* entry)
     {
         this->entries.push_back(entry);
-        totalEntries++;  // Increment total entries
+        totalEntries++;  // Increment total entries count
     }
 
+    // View all diary entries
     void viewEntries() const
     {
         if (this->entries.empty())
@@ -69,15 +81,16 @@ public:
         }
     }
 
+    // Delete an entry by its date
     void deleteEntry(const string &date)
     {
         for (auto it = this->entries.begin(); it != this->entries.end();)
         {
             if ((*it)->getDate() == date)
             {
-                delete *it; // Free memory
-                it = this->entries.erase(it);
-                totalDeleted++;  // Increment total deleted
+                delete *it;  // Free memory
+                it = this->entries.erase(it);  // Erase entry from vector
+                totalDeleted++;  // Increment total deleted count
             }
             else
             {
@@ -86,6 +99,7 @@ public:
         }
     }
 
+    // Find an entry by its date
     void findEntry(const string &date) const
     {
         bool found = false;
@@ -104,6 +118,7 @@ public:
         }
     }
 
+    // Static function to display stats about entries and deletions
     static void displayStats()
     {
         cout << "Total Entries Created: " << totalEntries << "\n";
@@ -111,41 +126,49 @@ public:
     }
 };
 
-// Initialize static variables
+// Initialize static members
 int DiaryManager::totalEntries = 0;
 int DiaryManager::totalDeleted = 0;
 
 int main()
 {
-    DiaryManager diaryManager;
+    DiaryManager diaryManager;  // DiaryManager object
     int choice;
     string date, content;
 
     const int SIZE = 5;
-    DiaryEntry* initialEntries[SIZE];
+    DiaryEntry* initialEntries[SIZE];  // Array of pointers for initial entries
 
+    // Initialize sample entries
     initialEntries[0] = new DiaryEntry();
-    initialEntries[0]->setAll("2024-01-01", "New Year's Day");
+    initialEntries[0]->setDate("2024-01-01");
+    initialEntries[0]->setContent("New Year's Day");
 
     initialEntries[1] = new DiaryEntry();
-    initialEntries[1]->setAll("2024-02-14", "Valentine's Day");
+    initialEntries[1]->setDate("2024-02-14");
+    initialEntries[1]->setContent("Valentine's Day");
 
     initialEntries[2] = new DiaryEntry();
-    initialEntries[2]->setAll("2024-03-17", "St. Patrick's Day");
+    initialEntries[2]->setDate("2024-03-17");
+    initialEntries[2]->setContent("St. Patrick's Day");
 
     initialEntries[3] = new DiaryEntry();
-    initialEntries[3]->setAll("2024-07-04", "Independence Day");
+    initialEntries[3]->setDate("2024-07-04");
+    initialEntries[3]->setContent("Independence Day");
 
     initialEntries[4] = new DiaryEntry();
-    initialEntries[4]->setAll("2024-12-25", "Christmas Day");
+    initialEntries[4]->setDate("2024-12-25");
+    initialEntries[4]->setContent("Christmas Day");
 
+    // Add initial entries to the diary
     cout << "Adding initial entries...\n";
     for (int i = 0; i < SIZE; ++i)
     {
         diaryManager.addEntry(initialEntries[i]);
-        cout << "entry " << i + 1 << ": " << initialEntries[i]->getDate() << " - " << initialEntries[i]->getContent() << "\n";
+        cout << "Entry " << i + 1 << ": " << initialEntries[i]->getDate() << " - " << initialEntries[i]->getContent() << "\n";
     }
 
+    // Menu for user interaction
     while (true)
     {
         cout << "\nDiary Manager\n";
@@ -157,7 +180,7 @@ int main()
         cout << "6. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
-        cin.ignore();
+        cin.ignore();  // Clear the input buffer
 
         switch (choice)
         {
@@ -168,7 +191,8 @@ int main()
             getline(cin, content);
             {
                 DiaryEntry* entry = new DiaryEntry();
-                entry->setAll(date, content);
+                entry->setDate(date);
+                entry->setContent(content);
                 diaryManager.addEntry(entry);
             }
             break;
