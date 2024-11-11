@@ -32,6 +32,19 @@ public:
         cout << "Destructor called for DiaryEntry with date: " << date << "\n";
     }
 
+    // Overloaded display function for different scenarios (demonstrating function overloading)
+    void displayEntry() const
+    {
+        cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
+    }
+
+    virtual void displayEntry(bool includeHeader) const
+    {
+        if (includeHeader)
+            cout << "---- Diary Entry ----\n";
+        cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
+    }
+
     // Public Mutator (setter) for the date
     void setDate(const string &date)
     {
@@ -55,12 +68,6 @@ public:
     {
         return this->content;
     }
-
-    // Virtual function to display the diary entry details
-    virtual void displayEntry() const
-    {
-        cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
-    }
 };
 
 // Derived class representing personal diary entries
@@ -82,9 +89,12 @@ public:
         return this->mood;
     }
 
-    void displayEntry() const override
+    // Overridden display function demonstrating polymorphism
+    void displayEntry(bool includeHeader = true) const override
     {
-        DiaryEntry::displayEntry();
+        if (includeHeader)
+            cout << "---- Personal Entry ----\n";
+        DiaryEntry::displayEntry(false);
         cout << "Mood: " << this->mood << "\n";
     }
 };
@@ -108,9 +118,12 @@ public:
         return this->projectName;
     }
 
-    void displayEntry() const override
+    // Overridden display function demonstrating polymorphism
+    void displayEntry(bool includeHeader = true) const override
     {
-        DiaryEntry::displayEntry();
+        if (includeHeader)
+            cout << "---- Work Entry ----\n";
+        DiaryEntry::displayEntry(false);
         cout << "Project: " << this->projectName << "\n";
     }
 };
@@ -158,7 +171,7 @@ public:
 
         for (const auto &entry : this->entries)
         {
-            entry->displayEntry();
+            entry->displayEntry(true);  // Using the overloaded function with header option
             cout << "----------------------\n";
         }
     }
@@ -189,7 +202,7 @@ public:
         {
             if (entry->getDate() == date)
             {
-                entry->displayEntry();
+                entry->displayEntry(true);
                 found = true;
                 break;
             }
