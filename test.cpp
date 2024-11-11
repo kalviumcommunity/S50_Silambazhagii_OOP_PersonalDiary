@@ -3,12 +3,11 @@
 #include <vector>
 using namespace std;
 
-// Class to represent individual diary entries
 class DiaryEntry
 {
-private:
-    string date;     // Private members for encapsulation (Abstraction)
-    string content;  // Hiding implementation details from the user
+protected:
+    string date;    
+    string content; 
 
 public:
     // Default constructor
@@ -28,12 +27,12 @@ public:
     }
 
     // Destructor
-    ~DiaryEntry()
+    virtual ~DiaryEntry()
     {
         cout << "Destructor called for DiaryEntry with date: " << date << "\n";
     }
 
-    // Public Mutator (setter) for the date - Abstraction of internal data handling
+    // Public Mutator (setter) for the date
     void setDate(const string &date)
     {
         this->date = date;
@@ -57,10 +56,62 @@ public:
         return this->content;
     }
 
-    // Function to display the diary entry details
-    void displayEntry() const
+    // Virtual function to display the diary entry details
+    virtual void displayEntry() const
     {
         cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
+    }
+};
+
+// Derived class representing personal diary entries
+class PersonalEntry : public DiaryEntry
+{
+private:
+    string mood;
+
+public:
+    PersonalEntry(const string &date, const string &content, const string &mood) : DiaryEntry(date, content), mood(mood) {}
+
+    void setMood(const string &mood)
+    {
+        this->mood = mood;
+    }
+
+    string getMood() const
+    {
+        return this->mood;
+    }
+
+    void displayEntry() const override
+    {
+        DiaryEntry::displayEntry();
+        cout << "Mood: " << this->mood << "\n";
+    }
+};
+
+// Derived class representing work-related diary entries
+class WorkEntry : public DiaryEntry
+{
+private:
+    string projectName;
+
+public:
+    WorkEntry(const string &date, const string &content, const string &projectName) : DiaryEntry(date, content), projectName(projectName) {}
+
+    void setProjectName(const string &projectName)
+    {
+        this->projectName = projectName;
+    }
+
+    string getProjectName() const
+    {
+        return this->projectName;
+    }
+
+    void displayEntry() const override
+    {
+        DiaryEntry::displayEntry();
+        cout << "Project: " << this->projectName << "\n";
     }
 };
 
@@ -68,9 +119,9 @@ public:
 class DiaryManager
 {
 private:
-    vector<DiaryEntry*> entries;  // Vector to store pointers to DiaryEntry objects
-    static int totalEntries;      // Static member to keep track of total entries
-    static int totalDeleted;      // Static member to keep track of total deleted entries
+    vector<DiaryEntry*> entries;
+    static int totalEntries;      
+    static int totalDeleted;      
 
 public:
     // Constructor
@@ -92,8 +143,8 @@ public:
     // Function to add a new diary entry
     void addEntry(DiaryEntry* entry)
     {
-        this->entries.push_back(entry);  // Add entry to the vector
-        totalEntries++;  // Increment total entries count
+        this->entries.push_back(entry);  
+        totalEntries++;  
     }
 
     // Function to view all diary entries
@@ -119,9 +170,9 @@ public:
         {
             if ((*it)->getDate() == date)
             {
-                delete *it;  // Free dynamically allocated memory
-                it = this->entries.erase(it);  // Remove entry from the vector
-                totalDeleted++;  // Increment total deleted count
+                delete *it;  
+                it = this->entries.erase(it); 
+                totalDeleted++;  
             }
             else
             {
@@ -163,83 +214,90 @@ int DiaryManager::totalDeleted = 0;
 
 int main()
 {
-    DiaryManager diaryManager;  // Create DiaryManager object
+    DiaryManager diaryManager; 
     int choice;
-    string date, content;
+    string date, content, mood, projectName;
 
     // Array to hold initial diary entries
-    const int SIZE = 5;
+    const int SIZE = 2;
     DiaryEntry* initialEntries[SIZE]; 
 
-    // Initialize some sample diary entries using parameterized constructors
-    initialEntries[0] = new DiaryEntry("2024-01-01", "New Year's Day");
-    initialEntries[1] = new DiaryEntry("2024-02-14", "Valentine's Day");
-    initialEntries[2] = new DiaryEntry("2024-03-17", "St. Patrick's Day");
-    initialEntries[3] = new DiaryEntry("2024-07-04", "Independence Day");
-    initialEntries[4] = new DiaryEntry("2024-12-25", "Christmas Day");
+    // Initialize sample entries
+    initialEntries[0] = new PersonalEntry("2024-01-01", "New Year's Day", "Happy");
+    initialEntries[1] = new WorkEntry("2024-02-14", "Project deadline", "Tech Project");
 
     // Add the initial entries to the diary
     cout << "Adding initial entries...\n";
     for (int i = 0; i < SIZE; ++i)
     {
         diaryManager.addEntry(initialEntries[i]);
-        cout << "Entry " << i + 1 << ": " << initialEntries[i]->getDate() << " - " << initialEntries[i]->getContent() << "\n";
     }
 
     // Menu-driven interface for user interaction
     while (true)
     {
         cout << "\nDiary Manager\n";
-        cout << "1. Add Entry\n";
-        cout << "2. View Entries\n";
-        cout << "3. Delete Entry\n";
-        cout << "4. Find Entry\n";
-        cout << "5. Display Stats\n";
-        cout << "6. Exit\n";
+        cout << "1. Add Personal Entry\n";
+        cout << "2. Add Work Entry\n";
+        cout << "3. View Entries\n";
+        cout << "4. Delete Entry\n";
+        cout << "5. Find Entry\n";
+        cout << "6. Display Stats\n";
+        cout << "7. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
-        cin.ignore();  // Clear input buffer
+        cin.ignore();  
 
         switch (choice)
         {
         case 1:
-            // Add a new entry
+            // Add a new personal entry
             cout << "Enter date (YYYY-MM-DD): ";
             getline(cin, date);
             cout << "Enter content: ";
             getline(cin, content);
-            {
-                DiaryEntry* entry = new DiaryEntry(date, content);  // Use parameterized constructor
-                diaryManager.addEntry(entry);
-            }
+            cout << "Enter mood: ";
+            getline(cin, mood);
+            diaryManager.addEntry(new PersonalEntry(date, content, mood));
             break;
 
         case 2:
+            // Add a new work entry
+            cout << "Enter date (YYYY-MM-DD): ";
+            getline(cin, date);
+            cout << "Enter content: ";
+            getline(cin, content);
+            cout << "Enter project name: ";
+            getline(cin, projectName);
+            diaryManager.addEntry(new WorkEntry(date, content, projectName));
+            break;
+
+        case 3:
             // View all entries
             cout << "Diary Entries:\n";
             diaryManager.viewEntries();
             break;
 
-        case 3:
+        case 4:
             // Delete an entry by date
             cout << "Enter date of entry to delete (YYYY-MM-DD): ";
             getline(cin, date);
             diaryManager.deleteEntry(date);
             break;
 
-        case 4:
+        case 5:
             // Find an entry by date
             cout << "Enter date to find entry (YYYY-MM-DD): ";
             getline(cin, date);
             diaryManager.findEntry(date);
             break;
 
-        case 5:
+        case 6:
             // Display statistics
             DiaryManager::displayStats();
             break;
 
-        case 6:
+        case 7:
             return 0;  // Exit the program
 
         default:
