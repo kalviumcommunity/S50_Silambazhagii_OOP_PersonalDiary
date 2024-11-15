@@ -298,7 +298,7 @@ int main()
         default:
             cout << "Invalid choice. Please try again.\n";
             break;
-        }
+        }        
     }
 
     return 0;
