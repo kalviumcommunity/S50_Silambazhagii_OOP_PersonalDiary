@@ -26,6 +26,7 @@ public:
         cout << "Destructor called for DiaryEntry with date: " << date << "\n";
     }
 
+    // Pure virtual function to display the entry - enforcing subclasses to implement their own display logic
     virtual void displayEntry(bool includeHeader = true) const = 0;
 
     void setDate(const string &date)
