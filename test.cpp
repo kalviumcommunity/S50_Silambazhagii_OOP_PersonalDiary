@@ -3,6 +3,7 @@
 #include <vector>
 using namespace std;
 
+// Abstract base class representing a generic diary entry
 class DiaryEntry
 {
 protected:
@@ -11,39 +12,25 @@ protected:
 
 public:
     // Default constructor
-    DiaryEntry()
+    DiaryEntry() : date("N/A"), content("Empty")
     {
-        date = "N/A";
-        content = "Empty";
         cout << "Default constructor called for DiaryEntry.\n";
     }
 
     // Parameterized constructor
-    DiaryEntry(const string &date, const string &content)
+    DiaryEntry(const string &date, const string &content) : date(date), content(content)
     {
-        this->date = date;
-        this->content = content;
         cout << "Parameterized constructor called for DiaryEntry with date: " << date << "\n";
     }
 
-    // Destructor
+    // Virtual destructor
     virtual ~DiaryEntry()
     {
         cout << "Destructor called for DiaryEntry with date: " << date << "\n";
     }
 
-    // Overloaded display function for different scenarios (demonstrating function overloading)
-    void displayEntry() const
-    {
-        cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
-    }
-
-    virtual void displayEntry(bool includeHeader) const
-    {
-        if (includeHeader)
-            cout << "---- Diary Entry ----\n";
-        cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
-    }
+    // Pure virtual function (making DiaryEntry an abstract class)
+    virtual void displayEntry(bool includeHeader = true) const = 0;
 
     // Public Mutator (setter) for the date
     void setDate(const string &date)
@@ -77,7 +64,8 @@ private:
     string mood;
 
 public:
-    PersonalEntry(const string &date, const string &content, const string &mood) : DiaryEntry(date, content), mood(mood) {}
+    PersonalEntry(const string &date, const string &content, const string &mood) 
+        : DiaryEntry(date, content), mood(mood) {}
 
     void setMood(const string &mood)
     {
@@ -94,7 +82,7 @@ public:
     {
         if (includeHeader)
             cout << "---- Personal Entry ----\n";
-        DiaryEntry::displayEntry(false);
+        cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
         cout << "Mood: " << this->mood << "\n";
     }
 };
@@ -106,7 +94,8 @@ private:
     string projectName;
 
 public:
-    WorkEntry(const string &date, const string &content, const string &projectName) : DiaryEntry(date, content), projectName(projectName) {}
+    WorkEntry(const string &date, const string &content, const string &projectName) 
+        : DiaryEntry(date, content), projectName(projectName) {}
 
     void setProjectName(const string &projectName)
     {
@@ -123,7 +112,7 @@ public:
     {
         if (includeHeader)
             cout << "---- Work Entry ----\n";
-        DiaryEntry::displayEntry(false);
+        cout << "Date: " << this->date << "\nContent: " << this->content << "\n";
         cout << "Project: " << this->projectName << "\n";
     }
 };
@@ -171,7 +160,7 @@ public:
 
         for (const auto &entry : this->entries)
         {
-            entry->displayEntry(true);  // Using the overloaded function with header option
+            entry->displayEntry(true);  // Using the virtual display function
             cout << "----------------------\n";
         }
     }
@@ -183,7 +172,7 @@ public:
         {
             if ((*it)->getDate() == date)
             {
-                delete *it;  
+                delete *it;    
                 it = this->entries.erase(it); 
                 totalDeleted++;  
             }
@@ -318,6 +307,6 @@ int main()
             break;
         }
     }
-
+ 
     return 0;
 }
