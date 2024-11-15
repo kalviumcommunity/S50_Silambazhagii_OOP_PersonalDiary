@@ -7,50 +7,42 @@ using namespace std;
 class DiaryEntry
 {
 protected:
-    string date;    
-    string content; 
+    string date;
+    string content;
 
 public:
-    // Default constructor
     DiaryEntry() : date("N/A"), content("Empty")
     {
         cout << "Default constructor called for DiaryEntry.\n";
     }
 
-    // Parameterized constructor
     DiaryEntry(const string &date, const string &content) : date(date), content(content)
     {
         cout << "Parameterized constructor called for DiaryEntry with date: " << date << "\n";
     }
 
-    // Virtual destructor
     virtual ~DiaryEntry()
     {
         cout << "Destructor called for DiaryEntry with date: " << date << "\n";
     }
 
-    // Pure virtual function (making DiaryEntry an abstract class)
     virtual void displayEntry(bool includeHeader = true) const = 0;
 
-    // Public Mutator (setter) for the date
     void setDate(const string &date)
     {
         this->date = date;
     }
 
-    // Public Accessor (getter) for the date
     string getDate() const
     {
         return this->date;
     }
 
-    // Public Mutator (setter) for the content
     void setContent(const string &content)
     {
         this->content = content;
     }
 
-    // Public Accessor (getter) for the content
     string getContent() const
     {
         return this->content;
@@ -64,7 +56,7 @@ private:
     string mood;
 
 public:
-    PersonalEntry(const string &date, const string &content, const string &mood) 
+    PersonalEntry(const string &date, const string &content, const string &mood)
         : DiaryEntry(date, content), mood(mood) {}
 
     void setMood(const string &mood)
@@ -77,7 +69,6 @@ public:
         return this->mood;
     }
 
-    // Overridden display function demonstrating polymorphism
     void displayEntry(bool includeHeader = true) const override
     {
         if (includeHeader)
@@ -94,7 +85,7 @@ private:
     string projectName;
 
 public:
-    WorkEntry(const string &date, const string &content, const string &projectName) 
+    WorkEntry(const string &date, const string &content, const string &projectName)
         : DiaryEntry(date, content), projectName(projectName) {}
 
     void setProjectName(const string &projectName)
@@ -107,7 +98,6 @@ public:
         return this->projectName;
     }
 
-    // Overridden display function demonstrating polymorphism
     void displayEntry(bool includeHeader = true) const override
     {
         if (includeHeader)
@@ -117,23 +107,45 @@ public:
     }
 };
 
+// Class to manage diary statistics
+class DiaryStatistics
+{
+private:
+    int totalEntries = 0;
+    int totalDeleted = 0;
+
+public:
+    void incrementEntries()
+    {
+        totalEntries++;
+    }
+
+    void incrementDeleted()
+    {
+        totalDeleted++;
+    }
+
+    void displayStats() const
+    {
+        cout << "Total Entries Created: " << totalEntries << "\n";
+        cout << "Total Entries Deleted: " << totalDeleted << "\n";
+    }
+};
+
 // Class to manage multiple diary entries
 class DiaryManager
 {
 private:
     vector<DiaryEntry*> entries;
-    static int totalEntries;      
-    static int totalDeleted;      
+    DiaryStatistics stats;
 
 public:
-    // Constructor
     DiaryManager()
     {
         cout << "DiaryManager created.\n";
     }
 
-    // Destructor to clean up dynamically allocated memory
-    ~DiaryManager() 
+    ~DiaryManager()
     {
         for (auto entry : entries)
         {
@@ -142,39 +154,36 @@ public:
         cout << "DiaryManager destroyed, memory cleaned.\n";
     }
 
-    // Function to add a new diary entry
     void addEntry(DiaryEntry* entry)
     {
-        this->entries.push_back(entry);  
-        totalEntries++;  
+        entries.push_back(entry);
+        stats.incrementEntries();
     }
 
-    // Function to view all diary entries
     void viewEntries() const
     {
-        if (this->entries.empty())
+        if (entries.empty())
         {
             cout << "No entries to display.\n";
             return;
         }
 
-        for (const auto &entry : this->entries)
+        for (const auto &entry : entries)
         {
-            entry->displayEntry(true);  // Using the virtual display function
+            entry->displayEntry(true);
             cout << "----------------------\n";
         }
     }
 
-    // Function to delete an entry by its date
     void deleteEntry(const string &date)
     {
-        for (auto it = this->entries.begin(); it != this->entries.end();)
+        for (auto it = entries.begin(); it != entries.end();)
         {
             if ((*it)->getDate() == date)
             {
-                delete *it;    
-                it = this->entries.erase(it); 
-                totalDeleted++;  
+                delete *it;
+                it = entries.erase(it);
+                stats.incrementDeleted();
             }
             else
             {
@@ -183,11 +192,10 @@ public:
         }
     }
 
-    // Function to find an entry by its date
     void findEntry(const string &date) const
     {
         bool found = false;
-        for (const auto &entry : this->entries)
+        for (const auto &entry : entries)
         {
             if (entry->getDate() == date)
             {
@@ -202,40 +210,30 @@ public:
         }
     }
 
-    // Static function to display total entries and deletions
-    static void displayStats()
+    void displayStats() const
     {
-        cout << "Total Entries Created: " << totalEntries << "\n";
-        cout << "Total Entries Deleted: " << totalDeleted << "\n";
+        stats.displayStats();
     }
 };
 
-// Initialize static members
-int DiaryManager::totalEntries = 0;
-int DiaryManager::totalDeleted = 0;
-
 int main()
 {
-    DiaryManager diaryManager; 
+    DiaryManager diaryManager;
     int choice;
     string date, content, mood, projectName;
 
-    // Array to hold initial diary entries
     const int SIZE = 2;
-    DiaryEntry* initialEntries[SIZE]; 
+    DiaryEntry* initialEntries[SIZE];
 
-    // Initialize sample entries
     initialEntries[0] = new PersonalEntry("2024-01-01", "New Year's Day", "Happy");
     initialEntries[1] = new WorkEntry("2024-02-14", "Project deadline", "Tech Project");
 
-    // Add the initial entries to the diary
     cout << "Adding initial entries...\n";
     for (int i = 0; i < SIZE; ++i)
     {
         diaryManager.addEntry(initialEntries[i]);
     }
 
-    // Menu-driven interface for user interaction
     while (true)
     {
         cout << "\nDiary Manager\n";
@@ -248,12 +246,11 @@ int main()
         cout << "7. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
-        cin.ignore();  
+        cin.ignore();
 
         switch (choice)
         {
         case 1:
-            // Add a new personal entry
             cout << "Enter date (YYYY-MM-DD): ";
             getline(cin, date);
             cout << "Enter content: ";
@@ -264,7 +261,6 @@ int main()
             break;
 
         case 2:
-            // Add a new work entry
             cout << "Enter date (YYYY-MM-DD): ";
             getline(cin, date);
             cout << "Enter content: ";
@@ -275,38 +271,34 @@ int main()
             break;
 
         case 3:
-            // View all entries
             cout << "Diary Entries:\n";
             diaryManager.viewEntries();
             break;
 
         case 4:
-            // Delete an entry by date
             cout << "Enter date of entry to delete (YYYY-MM-DD): ";
             getline(cin, date);
             diaryManager.deleteEntry(date);
             break;
 
         case 5:
-            // Find an entry by date
             cout << "Enter date to find entry (YYYY-MM-DD): ";
             getline(cin, date);
             diaryManager.findEntry(date);
             break;
 
         case 6:
-            // Display statistics
-            DiaryManager::displayStats();
+            diaryManager.displayStats();
             break;
 
         case 7:
-            return 0;  // Exit the program
+            return 0;
 
         default:
             cout << "Invalid choice. Please try again.\n";
             break;
         }
     }
- 
+
     return 0;
 }
